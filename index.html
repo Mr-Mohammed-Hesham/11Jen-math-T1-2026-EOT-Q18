@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Conditional Probability by Reduced Sample Space - رياضيات 11 عام | Mr. Mohammed Hesham</title>
+<meta name="description" content="امتحان تفاعلي عن إيجاد احتمالات الأحداث علماً بوقوع أحداث أخرى بتقليص فضاء العينة - رياضيات صف 11 عام">
+<meta name="author" content="Mr. Mohammed Hesham">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+body.en-mode { font-family: 'Inter', sans-serif; direction: ltr; }
+.arabic-math { font-family: 'Amiri', 'Cairo', serif; }
+.correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+.incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+.timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+@keyframes pulse { 50% { opacity: 0.7; } }
+@media print { .no-print { display: none !important; } }
+.success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+.grade-excellent { background: #dcfce7; color: #166534; }
+.grade-good { background: #fef3c7; color: #92400e; }
+.grade-pass { background: #dbeafe; color: #1e40af; }
+.grade-fail { background: #fee2e2; color: #991b1b; }
+.lang-switch { position: fixed; top: 16px; left: 16px; z-index: 100; background: white; padding: 6px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px; border: 2px solid #d97706; }
+body.en-mode .lang-switch { left: auto; right: 16px; }
+.lang-btn { padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; border: none; font-size: 0.875rem; background: transparent; color: #6b7280; }
+.lang-btn.active { background: #d97706; color: white; }
+.shuffle-badge { display: inline-block; background: linear-gradient(135deg, #d97706, #b45309); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; }
+body.en-mode .shuffle-badge { margin-right: 0; margin-left: 8px; }
+.math-display { display: inline-block; direction: ltr; font-family: 'Amiri', serif; font-size: 1.15em; padding: 2px 8px; background: #fef3c7; border-radius: 4px; margin: 2px; color: #92400e; font-weight: 700; }
+.save-indicator { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+body.en-mode .save-indicator { left: auto; right: 20px; }
+.save-indicator.show { opacity: 1; }
+.formula-box { background: #fef3c7; border: 2px solid #d97706; border-radius: 8px; padding: 12px; margin: 10px 0; font-family: 'Amiri', serif; direction: ltr; text-align: center; }
+.svg-graph { display: block; margin: 12px auto; background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 8px; max-width: 100%; }
+.graph-container { text-align: center; margin: 10px 0; }
+.module-badge { display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 8px; }
+.module-1 { background: #fef3c7; color: #92400e; }
+.module-2 { background: #dbeafe; color: #1e40af; }
+.module-3 { background: #fce7f3; color: #9f1239; }
+.module-4 { background: #ecfdf5; color: #065f46; }
+.module-5 { background: #ede9fe; color: #5b21b6; }
+.module-6 { background: #fee2e2; color: #991b1b; }
+</style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+<div class="lang-switch no-print">
+<button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+<button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+</div>
+
+<div id="saveIndicator" class="save-indicator">💾 <span data-ar="تم الحفظ" data-en="Saved">تم الحفظ</span></div>
+
+<div id="timer-container" class="max-w-5xl mx-auto mb-4 text-center no-print">
+<div class="bg-white p-4 rounded-2xl shadow-lg inline-block border-2 border-amber-100">
+<span class="text-gray-600 ml-2">⏰ <span data-ar="الوقت المتبقي:" data-en="Time Left:">الوقت المتبقي:</span></span>
+<span id="timer" class="text-2xl font-bold text-amber-700 font-mono">45:00</span>
+<span class="shuffle-badge">🎯 <span data-ar="الاحتمال الشرطي" data-en="Conditional Probability">الاحتمال الشرطي</span> - 30 <span data-ar="سؤال" data-en="Questions">سؤال</span></span>
+</div>
+</div>
+
+<div class="max-w-5xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+<button onclick="toggleAnswers()" class="bg-amber-700 hover:bg-amber-800 text-white px-5 py-2 rounded-xl font-medium transition shadow">👀 <span data-ar="إظهار/إخفاء الإجابات" data-en="Show/Hide Answers">إظهار/إخفاء الإجابات</span></button>
+<button onclick="window.print()" class="bg-gray-700 hover:bg-gray-900 text-white px-5 py-2 rounded-xl font-medium transition shadow">🖨️ <span data-ar="طباعة" data-en="Print">طباعة</span></button>
+<button onclick="reshuffleExam()" class="bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white px-5 py-2 rounded-xl font-medium transition shadow">🔄 <span data-ar="أسئلة جديدة" data-en="New Questions">أسئلة جديدة</span></button>
+<button onclick="clearProgress()" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition shadow">🗑️ <span data-ar="مسح التقدم" data-en="Clear Progress">مسح التقدم</span></button>
+</div>
+
+<header class="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl mb-8 border-4 border-amber-500">
+<div class="text-center">
+<div class="inline-block bg-amber-700 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">MATH GRADE 11 GENERAL - QUESTION 18</div>
+<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">🎯 <span data-ar="إيجاد احتمالات الأحداث علماً بوقوع أحداث أخرى" data-en="Finding Probabilities Given Other Events Occurred">إيجاد احتمالات الأحداث علماً بوقوع أحداث أخرى</span></h1>
+<h2 class="text-xl text-amber-700 font-semibold mb-2"><span data-ar="الوحدة 3 - الدرس 3-6 | ص 186 (مثال 4، ممارسة موجّهة 4)" data-en="Unit 3 - Lesson 3-6 | Page 186 (Example 4, Guided Practice 4)">الوحدة 3 - الدرس 3-6 | ص 186 (مثال 4، ممارسة موجّهة 4)</span></h2>
+<p class="text-gray-600 mb-4"><span data-ar="قلّص فضاء العينة بالشرط المعلوم، ثم عُدّ النواتج المؤاتية داخله" data-en="Reduce the sample space by the given condition, then count favorable outcomes inside it">قلّص فضاء العينة بالشرط المعلوم، ثم عُدّ النواتج المؤاتية داخله</span></p>
+<p class="text-sm text-green-600 font-semibold">💾 <span data-ar="يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام" data-en="Auto-saved - 30 questions in 6 sections">يتم حفظ تقدمك تلقائياً - 30 سؤالاً في 6 أقسام</span></p>
+</div>
+<div class="mt-6 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+<span>📅 <span data-ar="التاريخ:" data-en="Date:">التاريخ:</span> <input type="text" id="examDate" class="border-b-2 border-amber-300 bg-transparent w-32 text-center"></span>
+<span>😊 <span data-ar="الاسم:" data-en="Name:">الاسم:</span> <input type="text" id="studentName" class="border-b-2 border-amber-300 bg-transparent w-40 text-center" data-placeholder-ar="اكتب اسمك" data-placeholder-en="Your name" placeholder="اكتب اسمك"></span>
+<span>🏫 <span data-ar="الشعبة:" data-en="Class:">الشعبة:</span> <input type="text" id="studentClass" class="border-b-2 border-amber-300 bg-transparent w-32 text-center" data-placeholder-ar="الشعبة" data-placeholder-en="Class" placeholder="الشعبة"></span>
+<span>⏰ <span data-ar="المدة: 45 دقيقة" data-en="Duration: 45 min">المدة: 45 دقيقة</span></span>
+<span>📊 <span data-ar="المجموع: 100 درجة" data-en="Total: 100 points">المجموع: 100 درجة</span></span>
+</div>
+</header>
+
+<div class="max-w-5xl mx-auto mb-6 bg-white p-4 rounded-xl shadow-lg border-2 border-amber-200 no-print">
+<h3 class="font-bold text-lg mb-3 text-amber-800 text-center">🎯 <span data-ar="فكرة الاحتمال الشرطي بالعدّ" data-en="Counting-Based Conditional Probability">فكرة الاحتمال الشرطي بالعدّ</span></h3>
+<div class="grid md:grid-cols-3 gap-3 text-sm">
+<div class="formula-box"><strong>1)</strong> <span data-ar="حدّد فضاء الشرط F وعدّ عناصره" data-en="Identify condition space F & count it">حدّد فضاء الشرط F وعدّ عناصره</span></div>
+<div class="formula-box"><strong>2)</strong> <span data-ar="عُدّ عناصر E داخل F فقط" data-en="Count E outcomes inside F only">عُدّ عناصر E داخل F فقط</span></div>
+<div class="formula-box"><strong>3)</strong> <span class="math-display">P(E|F) = n(E∩F)/n(F)</span></div>
+</div>
+<div id="method-holder" class="mt-2"></div>
+</div>
+
+<main class="max-w-5xl mx-auto space-y-8" id="exam-content"></main>
+
+<div class="text-center no-print pb-8 mt-8">
+<button onclick="gradeExam()" class="bg-gradient-to-r from-amber-700 to-orange-600 hover:from-amber-800 hover:to-orange-700 text-white text-lg px-12 py-4 rounded-2xl font-bold shadow-xl transition transform hover:scale-105">🎯 <span data-ar="صحح إجاباتي!" data-en="Grade My Exam!">صحح إجاباتي!</span></button>
+</div>
+
+<div id="results-panel" class="max-w-5xl mx-auto mt-8 bg-white p-8 rounded-3xl shadow-2xl border-4 border-amber-500 hidden no-print">
+<h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">🏆 <span data-ar="نتيجتك يا بطل!" data-en="Your Result, Champion!">نتيجتك يا بطل!</span> 🏆</h2>
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>😊 <span data-ar="الاسم" data-en="Name">الاسم</span></p><p id="res-name" class="font-bold text-xl text-amber-700">-</p></div>
+<div class="bg-orange-50 p-4 rounded-xl text-center"><p>📅 <span data-ar="التاريخ" data-en="Date">التاريخ</span></p><p id="res-date" class="font-bold text-xl text-orange-700">-</p></div>
+<div class="bg-amber-50 p-4 rounded-xl text-center"><p>🌟 <span data-ar="المجموع" data-en="Total">المجموع</span></p><p id="res-total" class="font-bold text-3xl text-amber-700">0 / 100</p></div>
+</div>
+<div class="text-center mb-6">
+<span id="success-badge" class="success-badge grade-excellent">-</span>
+<p id="success-percent" class="text-4xl font-bold text-amber-700 mt-2">0%</p>
+<p class="text-sm text-gray-500"><span data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</span></p>
+</div>
+<div class="bg-gray-50 p-6 rounded-xl mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">📊 <span data-ar="أداؤك في كل قسم:" data-en="Your Performance by Section:">أداؤك في كل قسم:</span></h3>
+<div class="space-y-3" id="sections-performance"></div>
+</div>
+<div class="text-center">
+<button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-amber-700 to-orange-600 text-white text-lg px-8 py-3 rounded-2xl font-bold shadow-xl transition">📧 <span data-ar="أرسل النتيجة للمعلم" data-en="Send Result to Teacher">أرسل النتيجة للمعلم</span></button>
+<p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+</div>
+</div>
+
+<footer class="max-w-5xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+© Conditional Probability (Reduced Space) - Grade 11 General | Mr. Mohammed Hesham 🎯
+</footer>
+
+<script>
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+emailjs.init(PUBLIC_KEY);
+
+const STORAGE_KEY = 'cond_prob_reduced_g11_v1';
+const TOTAL_TIME = 2700;
+const TOTAL_QUESTIONS = 30;
+const TOTAL_SECTIONS = 6;
+const QUESTIONS_PER_SECTION = 5;
+
+let currentSeed = null, answersVisible = false, saveIndicatorTimeout = null;
+let currentLang = 'ar', timeRemaining = TOTAL_TIME, timerInterval;
+let examData, correctAnswersMap = {}, rng = null;
+
+function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function showSaveIndicator(){const i=document.getElementById('saveIndicator');i.classList.add('show');if(saveIndicatorTimeout)clearTimeout(saveIndicatorTimeout);saveIndicatorTimeout=setTimeout(()=>i.classList.remove('show'),1500)}
+function saveState(s=true){try{localStorage.setItem(STORAGE_KEY,JSON.stringify({seed:currentSeed,lang:currentLang,studentName:document.getElementById('studentName').value,studentClass:document.getElementById('studentClass').value,examDate:document.getElementById('examDate').value,answers:getSelectedAnswers(),timeRemaining:timeRemaining,answersVisible:answersVisible,savedAt:Date.now()}));if(s)showSaveIndicator()}catch(e){console.error(e)}}
+function loadState(){try{const s=localStorage.getItem(STORAGE_KEY);return s?JSON.parse(s):null}catch(e){return null}}
+function getSelectedAnswers(){const a={};for(let i=0;i<TOTAL_QUESTIONS;i++){const s=document.querySelector('input[name="q'+i+'"]:checked');if(s)a[i]=s.value}return a}
+function restoreAnswers(a){if(!a)return;for(const[i,v]of Object.entries(a)){const r=document.querySelector('input[name="q'+i+'"][value="'+v+'"]');if(r)r.checked=true}}
+function clearProgress(){if(confirm(currentLang==='ar'?'⚠️ هل أنت متأكد من مسح كل التقدم؟':'⚠️ Clear all progress?')){localStorage.removeItem(STORAGE_KEY);location.reload()}}
+function setupAnswerListeners(){document.getElementById('exam-content').addEventListener('change',e=>{if(e.target.type==='radio')saveState()})}
+function setupInputListeners(){['studentName','studentClass','examDate'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',()=>saveState(false));el.addEventListener('blur',()=>saveState())}})}
+
+// ==================== SVG DIAGRAMS ====================
+const svgGraphs = {
+fig_cards: `<svg class="svg-graph" width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="240" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#92400e" font-weight="bold">🃏 مثال 4: بطاقات 1-8 | أيمن في الفريق المعارض (زوجي)</text>
+<g font-size="14" font-weight="bold" text-anchor="middle" font-family="'Amiri',serif">
+<rect x="40" y="45" width="48" height="60" rx="6" fill="#fff" stroke="#9ca3af" stroke-width="2"/><text x="64" y="82" fill="#6b7280">1</text>
+<rect x="96" y="45" width="48" height="60" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="120" y="82" fill="#166534">2</text>
+<rect x="152" y="45" width="48" height="60" rx="6" fill="#fff" stroke="#9ca3af" stroke-width="2"/><text x="176" y="82" fill="#6b7280">3</text>
+<rect x="208" y="45" width="48" height="60" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="232" y="82" fill="#166534">4</text>
+<rect x="264" y="45" width="48" height="60" rx="6" fill="#fff" stroke="#9ca3af" stroke-width="2"/><text x="288" y="82" fill="#6b7280">5</text>
+<rect x="320" y="45" width="48" height="60" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="344" y="82" fill="#166534">6</text>
+<rect x="376" y="45" width="48" height="60" rx="6" fill="#fff" stroke="#9ca3af" stroke-width="2"/><text x="400" y="82" fill="#6b7280">7</text>
+<rect x="432" y="45" width="48" height="60" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="2.5"/><text x="456" y="82" fill="#166534">8</text>
+</g>
+<rect x="96" y="118" width="384" height="34" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="288" y="140" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">فضاء الشرط (المعارض = زوجي): {2, 4, 6, 8} ⇒ 4 نواتج</text>
+<rect x="96" y="160" width="384" height="34" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="288" y="182" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">الحدث المؤاتي: سحب العدد 2 ⇒ ناتج واحد</text>
+<rect x="96" y="202" width="384" height="36" rx="8" fill="#fff" stroke="#d97706" stroke-width="2.5"/>
+<text x="288" y="226" text-anchor="middle" font-size="14" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(2 | زوجي) = 1/4</text>
+</svg>`,
+
+fig_dice_sum9: `<svg class="svg-graph" width="500" height="300" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="290" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#1e40af" font-weight="bold">🎲 ممارسة 4: مجموع 9 ⇒ الفضاء المقلّص 4 خلايا</text>
+<g font-size="10" font-weight="bold" text-anchor="middle" font-family="'Amiri',serif">
+<text x="120" y="48" fill="#1e40af">1</text><text x="170" y="48" fill="#1e40af">2</text><text x="220" y="48" fill="#1e40af">3</text><text x="270" y="48" fill="#1e40af">4</text><text x="320" y="48" fill="#1e40af">5</text><text x="370" y="48" fill="#1e40af">6</text>
+<text x="80" y="78" fill="#1e40af">1</text><text x="80" y="113" fill="#1e40af">2</text><text x="80" y="148" fill="#1e40af">3</text><text x="80" y="183" fill="#1e40af">4</text><text x="80" y="218" fill="#1e40af">5</text><text x="80" y="253" fill="#1e40af">6</text>
+</g>
+<g stroke="#93c5fd" stroke-width="1">
+<rect x="95" y="55" width="50" height="35" fill="#eff6ff"/><rect x="145" y="55" width="50" height="35" fill="#eff6ff"/><rect x="195" y="55" width="50" height="35" fill="#eff6ff"/><rect x="245" y="55" width="50" height="35" fill="#eff6ff"/><rect x="295" y="55" width="50" height="35" fill="#eff6ff"/><rect x="345" y="55" width="50" height="35" fill="#eff6ff"/>
+<rect x="95" y="90" width="50" height="35" fill="#eff6ff"/><rect x="145" y="90" width="50" height="35" fill="#eff6ff"/><rect x="195" y="90" width="50" height="35" fill="#eff6ff"/><rect x="245" y="90" width="50" height="35" fill="#eff6ff"/><rect x="295" y="90" width="50" height="35" fill="#eff6ff"/><rect x="345" y="90" width="50" height="35" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.5"/>
+<rect x="95" y="125" width="50" height="35" fill="#eff6ff"/><rect x="145" y="125" width="50" height="35" fill="#eff6ff"/><rect x="195" y="125" width="50" height="35" fill="#eff6ff"/><rect x="245" y="125" width="50" height="35" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.5"/><rect x="295" y="125" width="50" height="35" fill="#eff6ff"/><rect x="345" y="125" width="50" height="35" fill="#eff6ff"/>
+<rect x="95" y="160" width="50" height="35" fill="#eff6ff"/><rect x="145" y="160" width="50" height="35" fill="#eff6ff"/><rect x="195" y="160" width="50" height="35" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.5"/><rect x="245" y="160" width="50" height="35" fill="#eff6ff"/><rect x="295" y="160" width="50" height="35" fill="#eff6ff"/><rect x="345" y="160" width="50" height="35" fill="#eff6ff"/>
+<rect x="95" y="195" width="50" height="35" fill="#eff6ff"/><rect x="145" y="195" width="50" height="35" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.5"/><rect x="195" y="195" width="50" height="35" fill="#eff6ff"/><rect x="245" y="195" width="50" height="35" fill="#eff6ff"/><rect x="295" y="195" width="50" height="35" fill="#eff6ff"/><rect x="345" y="195" width="50" height="35" fill="#eff6ff"/>
+<rect x="95" y="230" width="50" height="35" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.5"/><rect x="145" y="230" width="50" height="35" fill="#eff6ff"/><rect x="195" y="230" width="50" height="35" fill="#eff6ff"/><rect x="245" y="230" width="50" height="35" fill="#eff6ff"/><rect x="295" y="230" width="50" height="35" fill="#eff6ff"/><rect x="345" y="230" width="50" height="35" fill="#eff6ff"/>
+</g>
+<g font-size="9" text-anchor="middle" fill="#1e3a8a" font-weight="bold">
+<text x="370" y="112">(3,6)</text><text x="270" y="147">(4,5)</text><text x="220" y="182">(5,4)</text><text x="120" y="252">(6,3)</text>
+</g>
+<circle cx="270" cy="142" r="6" fill="#dc2626"/><circle cx="220" cy="177" r="6" fill="#dc2626"/>
+<rect x="405" y="70" width="85" height="180" rx="8" fill="#fff" stroke="#2563eb" stroke-width="2"/>
+<text x="447" y="95" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="bold">مجموع 9: 4</text>
+<text x="447" y="120" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">فيها 4: 2</text>
+<text x="447" y="150" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">P = 2/4</text>
+<text x="447" y="175" text-anchor="middle" font-size="13" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 1/2</text>
+<text x="447" y="205" text-anchor="middle" font-size="8.5" fill="#6b7280">النقطتان الحمراوان</text>
+<text x="447" y="220" text-anchor="middle" font-size="8.5" fill="#6b7280">(4,5) و (5,4)</text>
+</svg>`,
+
+fig_reduced: `<svg class="svg-graph" width="500" height="230" viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="220" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#065f46" font-weight="bold">🔭 تقليص فضاء العينة: من 36 إلى 4</text>
+<rect x="40" y="50" width="180" height="120" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+<text x="130" y="72" text-anchor="middle" font-size="11" fill="#065f46" font-weight="bold">الفضاء الكلي S</text>
+<g fill="#6ee7b7"><circle cx="70" cy="100" r="4"/><circle cx="95" cy="90" r="4"/><circle cx="120" cy="105" r="4"/><circle cx="145" cy="92" r="4"/><circle cx="170" cy="104" r="4"/><circle cx="82" cy="130" r="4"/><circle cx="110" cy="140" r="4"/><circle cx="140" cy="132" r="4"/><circle cx="168" cy="142" r="4"/><circle cx="95" cy="155" r="4"/><circle cx="150" cy="155" r="4"/></g>
+<text x="130" y="165" text-anchor="middle" font-size="10" fill="#065f46">36 ناتجاً</text>
+<path d="M 225 110 L 265 110" stroke="#dc2626" stroke-width="2.5" marker-end="url(#rdA)"/>
+<text x="245" y="98" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">الشرط: مجموع 9</text>
+<rect x="270" y="50" width="120" height="120" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+<text x="330" y="72" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">الفضاء الجديد F</text>
+<g fill="#f59e0b"><circle cx="300" cy="100" r="6"/><circle cx="330" cy="95" r="6"/><circle cx="360" cy="102" r="6"/><circle cx="315" cy="135" r="6"/></g>
+<circle cx="330" cy="95" r="9" fill="none" stroke="#dc2626" stroke-width="2.5"/><circle cx="360" cy="102" r="9" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+<text x="330" y="162" text-anchor="middle" font-size="10" fill="#92400e">4 نواتج، المؤاتي 2</text>
+<rect x="400" y="70" width="80" height="80" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+<text x="440" y="100" text-anchor="middle" font-size="12" fill="#166534" font-family="'Amiri',serif" font-weight="bold">2/4</text>
+<text x="440" y="125" text-anchor="middle" font-size="13" fill="#166534" font-family="'Amiri',serif" font-weight="bold">= 1/2</text>
+<rect x="40" y="182" width="440" height="34" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="204" text-anchor="middle" font-size="10.5" fill="#92400e" font-weight="bold">💡 لا تقسم على 36 بعد معرفة الشرط — المقام يصبح عدد نواتج الشرط!</text>
+<defs><marker id="rdA" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L0,8 L8,4 z" fill="#dc2626"/></marker></defs>
+</svg>`,
+
+fig_family: `<svg class="svg-graph" width="500" height="240" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="230" rx="12" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#9f1239" font-weight="bold">👨‍👧‍👦 طفلان: علماً بأن أحدهما ولد على الأقل</text>
+<g font-size="13" font-weight="bold" text-anchor="middle" font-family="'Amiri',serif">
+<rect x="60" y="50" width="80" height="50" rx="8" fill="#bfdbfe" stroke="#2563eb" stroke-width="2.5"/><text x="100" y="80" fill="#1e40af">و و</text>
+<rect x="160" y="50" width="80" height="50" rx="8" fill="#fbcfe8" stroke="#db2777" stroke-width="2.5"/><text x="200" y="80" fill="#9f1239">و ب</text>
+<rect x="260" y="50" width="80" height="50" rx="8" fill="#fbcfe8" stroke="#db2777" stroke-width="2.5"/><text x="300" y="80" fill="#9f1239">ب و</text>
+<rect x="360" y="50" width="80" height="50" rx="8" fill="#fbcfe8" stroke="#db2777" stroke-width="2.5"/><text x="400" y="80" fill="#9f1239">ب ب</text>
+</g>
+<line x1="100" y1="100" x2="100" y2="130" stroke="#dc2626" stroke-width="3"/>
+<text x="100" y="148" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="bold">✗ مستبعد</text>
+<g stroke="#16a34a" stroke-width="3"><line x1="200" y1="100" x2="200" y2="130"/><line x1="300" y1="100" x2="300" y2="130"/><line x1="400" y1="100" x2="400" y2="130"/></g>
+<text x="300" y="148" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">الفضاء المقلّص: 3 نواتج ✓</text>
+<rect x="60" y="162" width="380" height="60" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="184" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">حدث «ولدان» داخل الفضاء المقلّص: ناتج واحد (و و)</text>
+<text x="250" y="208" text-anchor="middle" font-size="13" fill="#166534" font-family="'Amiri',serif" font-weight="bold">P(ولدان | ولد على الأقل) = 1/3</text>
+</svg>`,
+
+fig_deck: `<svg class="svg-graph" width="500" height="220" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="210" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#5b21b6" font-weight="bold">🂡 ورقة اللعب: علماً بأنها حمراء ⇒ 26 ورقة</text>
+<rect x="60" y="50" width="380" height="60" rx="8" fill="#fecaca" stroke="#dc2626" stroke-width="2.5"/>
+<text x="250" y="72" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">الحمراء: 26 (ديناري ♥ + مربعات ♦)</text>
+<rect x="70" y="82" width="180" height="20" rx="5" fill="#fda4af" stroke="#be123c" stroke-width="2"/>
+<text x="160" y="96" text-anchor="middle" font-size="10" fill="#881337" font-weight="bold">قلوب ♥ = 13</text>
+<rect x="60" y="122" width="380" height="40" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+<text x="250" y="147" text-anchor="middle" font-size="12" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(قلب | حمراء) = 13/26 = 1/2</text>
+<rect x="60" y="172" width="380" height="34" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="250" y="194" text-anchor="middle" font-size="10.5" fill="#166534" font-weight="bold">لاحظ: بدون الشرط كانت 13/52 = 1/4 — الشرط غيّر المقام!</text>
+</svg>`,
+
+fig_doubles: `<svg class="svg-graph" width="500" height="250" viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="240" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="13" fill="#991b1b" font-weight="bold">🎲 علماً بأن العددين متساويان (دبل): 6 نواتج</text>
+<g font-size="11" font-weight="bold" text-anchor="middle" font-family="'Amiri',serif">
+<rect x="70" y="60" width="55" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="97" y="82" fill="#991b1b">(1,1)</text>
+<rect x="140" y="100" width="55" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="167" y="122" fill="#991b1b">(2,2)</text>
+<rect x="210" y="140" width="55" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="237" y="162" fill="#991b1b">(3,3)</text>
+<rect x="280" y="60" width="55" height="35" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="3"/><text x="307" y="82" fill="#166534">(4,4)</text>
+<rect x="350" y="100" width="55" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="377" y="122" fill="#991b1b">(5,5)</text>
+<rect x="420" y="140" width="55" height="35" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="2"/><text x="447" y="162" fill="#991b1b">(6,6)</text>
+</g>
+<text x="307" y="52" text-anchor="middle" font-size="10" fill="#166534" font-weight="bold">مجموعه 8 ✓</text>
+<rect x="70" y="190" width="360" height="44" rx="8" fill="#fff" stroke="#dc2626" stroke-width="2.5"/>
+<text x="250" y="208" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="bold">P(مجموع 8 | دبل) = 1/6</text>
+<text x="250" y="226" text-anchor="middle" font-size="9.5" fill="#991b1b">من أصل 6 دبلات وليس 36!</text>
+</svg>`,
+
+fig_formula: `<svg class="svg-graph" width="500" height="220" viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg">
+<rect x="5" y="5" width="490" height="210" rx="12" fill="#cffafe" stroke="#0891b2" stroke-width="2"/>
+<text x="250" y="26" text-anchor="middle" font-size="14" fill="#155e75" font-weight="bold">🧮 صيغة العدّ للأحداث المتساوية الاحتمال</text>
+<rect x="60" y="45" width="180" height="80" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+<text x="150" y="70" text-anchor="middle" font-size="11" fill="#155e75" font-weight="bold">n(F) = عدد نواتج الشرط</text>
+<text x="150" y="92" text-anchor="middle" font-size="10" fill="#155e75">مثال: زوجي = 4 | مجموع 9 = 4</text>
+<text x="150" y="112" text-anchor="middle" font-size="10" fill="#155e75">دبل = 6 | حمراء = 26</text>
+<rect x="260" y="45" width="180" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+<text x="350" y="70" text-anchor="middle" font-size="11" fill="#166534" font-weight="bold">n(E∩F) = المؤاتي داخله</text>
+<text x="350" y="92" text-anchor="middle" font-size="10" fill="#166534">مثال: العدد 2 = 1 | فيها 4 = 2</text>
+<text x="350" y="112" text-anchor="middle" font-size="10" fill="#166534">مجموع 8 = 1 | قلوب = 13</text>
+<rect x="60" y="140" width="380" height="56" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2.5"/>
+<text x="250" y="163" text-anchor="middle" font-size="14" fill="#92400e" font-family="'Amiri',serif" font-weight="bold">P(E|F) = n(E∩F) / n(F)</text>
+<text x="250" y="185" text-anchor="middle" font-size="10" fill="#92400e">تكافئ P(E∩F)/P(F) عندما تتساوى احتمالات النواتج</text>
+</svg>`
+};
+
+// ==================== EXAM DATA ====================
+const originalExamData = {
+sections: [
+{ id:'s1', title:{ar:'🔹 القسم 1: البطاقات والفرق (مثل مثال 4) (Q1-Q5)',en:'🔹 Section 1: Cards & Teams (like Ex.4) (Q1-Q5)'}, questions:[
+{ q:{ar:'<strong>السؤال 1 (مثال 4):</strong> بطاقات مرقمة 1 إلى 8؛ الفردي للداعم والزوجي للمعارض. إذا كان أيمن في الفريق المعارض، فما احتمال أنه سحب العدد 2؟',en:'<strong>Q1 (Ex.4):</strong> Cards 1-8; odd→supporting, even→opposing. Ayman is opposing; P(he drew 2)?'},
+  svg: svgGraphs.fig_cards,
+  options:[{ar:'<span class="math-display">1/8</span>',en:'<span class="math-display">1/8</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">3/8</span>',en:'<span class="math-display">3/8</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'}],
+  correct:1, answer:{ar:'فضاء الشرط {2,4,6,8} = 4 نواتج؛ المؤاتي 1 ⇒ P = 1/4',en:'Reduced space {2,4,6,8}; P = 1/4'} },
+{ q:{ar:'<strong>السؤال 2:</strong> في التجربة نفسها: إذا كان أيمن في الفريق المعارض، فما احتمال أنه سحب العدد 6؟',en:'<strong>Q2:</strong> Same experiment: P(drew 6 | opposing)?'},
+  options:[{ar:'<span class="math-display">1/8</span>',en:'<span class="math-display">1/8</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'}],
+  correct:1, answer:{ar:'الفضاء المقلّص 4 نواتج زوجية ⇒ P = 1/4',en:'1/4'} },
+{ q:{ar:'<strong>السؤال 3:</strong> في التجربة نفسها: إذا كان طالب في الفريق الداعم، فما احتمال أنه سحب العدد 3؟',en:'<strong>Q3:</strong> Same experiment: P(drew 3 | supporting team)?'},
+  options:[{ar:'<span class="math-display">1/8</span>',en:'<span class="math-display">1/8</span>'},{ar:'<span class="math-display">3/8</span>',en:'<span class="math-display">3/8</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/7</span>',en:'<span class="math-display">1/7</span>'}],
+  correct:2, answer:{ar:'الداعم = فردي {1,3,5,7} ⇒ P = 1/4',en:'Odd space {1,3,5,7}; P = 1/4'} },
+{ q:{ar:'<strong>السؤال 4:</strong> في التجربة نفسها: إذا كان أيمن في الفريق المعارض، فما احتمال أن يكون عدده أكبر من 5؟',en:'<strong>Q4:</strong> Same: P(number > 5 | opposing)?'},
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">1/8</span>',en:'<span class="math-display">1/8</span>'}],
+  correct:1, answer:{ar:'الزوجية الأكبر من 5: {6, 8} ⇒ 2/4 = 1/2',en:'{6,8} ⇒ 1/2'} },
+{ q:{ar:'<strong>السؤال 5:</strong> في التجربة نفسها: إذا كان طالب في الفريق الداعم، فما احتمال أن يكون عدده أولياً؟',en:'<strong>Q5:</strong> Same: P(prime | supporting)?'},
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">3/8</span>',en:'<span class="math-display">3/8</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'}],
+  correct:3, answer:{ar:'الفردية {1,3,5,7} والأولية بينها {3,5,7} ⇒ 3/4',en:'3/4'} }
+]},
+{ id:'s2', title:{ar:'🔹 القسم 2: مكعبان بمجموع معلوم (مثل ممارسة 4) (Q6-Q10)',en:'🔹 Section 2: Two Dice with Given Sum (like Practice 4) (Q6-Q10)'}, questions:[
+{ q:{ar:'<strong>السؤال 6 (ممارسة 4):</strong> عند رمي مكعبين، ما احتمال ظهور 4 على أحدهما علماً أن المجموع 9؟',en:'<strong>Q6 (Practice 4):</strong> Two dice: P(a 4 shows | sum = 9)?'},
+  svg: svgGraphs.fig_dice_sum9,
+  options:[{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'}],
+  correct:3, answer:{ar:'نواتج المجموع 9: {(3,6),(4,5),(5,4),(6,3)}؛ فيها 4: ناتجان ⇒ P = 2/4 = 1/2',en:'2/4 = 1/2'} },
+{ q:{ar:'<strong>السؤال 7:</strong> عند رمي مكعبين، ما احتمال ظهور 6 على أحدهما علماً أن المجموع 9؟',en:'<strong>Q7:</strong> P(a 6 shows | sum = 9)?'},
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:1, answer:{ar:'فيها 6: (3,6) و (6,3) ⇒ 2/4 = 1/2',en:'1/2'} },
+{ q:{ar:'<strong>السؤال 8:</strong> عند رمي مكعبين، ما احتمال ظهور 4 على أحدهما علماً أن المجموع 8؟',en:'<strong>Q8:</strong> P(a 4 shows | sum = 8)?'},
+  options:[{ar:'<span class="math-display">2/5</span>',en:'<span class="math-display">2/5</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/5</span>',en:'<span class="math-display">1/5</span>'},{ar:'<span class="math-display">4/5</span>',en:'<span class="math-display">4/5</span>'}],
+  correct:2, answer:{ar:'مجموع 8: {(2,6),(3,5),(4,4),(5,3),(6,2)} = 5؛ فيها 4: (4,4) فقط ⇒ 1/5',en:'1/5'} },
+{ q:{ar:'<strong>السؤال 9:</strong> عند رمي مكعبين، ما احتمال ظهور 3 على أحدهما علماً أن المجموع 7؟',en:'<strong>Q9:</strong> P(a 3 shows | sum = 7)?'},
+  options:[{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:2, answer:{ar:'مجموع 7: 6 نواتج؛ فيها 3: (3,4) و (4,3) ⇒ 2/6 = 1/3',en:'1/3'} },
+{ q:{ar:'<strong>السؤال 10:</strong> عند رمي مكعبين، ما احتمال أن يكون العددان زوجيين علماً أن المجموع 10؟',en:'<strong>Q10:</strong> P(both even | sum = 10)?'},
+  options:[{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:3, answer:{ar:'مجموع 10: {(4,6),(5,5),(6,4)}؛ زوجيان معاً: ناتجان ⇒ 2/3',en:'2/3'} }
+]},
+{ id:'s3', title:{ar:'🔹 القسم 3: فضاءات مقلّصة متنوعة (Q11-Q15)',en:'🔹 Section 3: Various Reduced Spaces (Q11-Q15)'}, questions:[
+{ q:{ar:'<strong>السؤال 11:</strong> عائلة لديها طفلان. ما احتمال أن يكونا ولدين علماً أن أحدهما ولد على الأقل؟',en:'<strong>Q11:</strong> A family has 2 children. P(both boys | at least one boy)?'},
+  svg: svgGraphs.fig_family,
+  options:[{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:1, answer:{ar:'الفضاء المقلّص {وو, وب, بو} = 3؛ المؤاتي {وو} ⇒ 1/3',en:'1/3'} },
+{ q:{ar:'<strong>السؤال 12:</strong> عائلة لديها طفلان. ما احتمال أن يكونا ولدين علماً أن الطفل الأول ولد؟',en:'<strong>Q12:</strong> P(both boys | first child is a boy)?'},
+  options:[{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'}],
+  correct:1, answer:{ar:'الفضاء المقلّص {وو, وب} = 2 ⇒ P = 1/2',en:'1/2'} },
+{ q:{ar:'<strong>السؤال 13:</strong> رميت قطعتين. ما احتمال ظهور صورتين علماً أن إحداهما على الأقل صورة؟',en:'<strong>Q13:</strong> Two coins: P(two heads | at least one head)?'},
+  options:[{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/3</span>'}],
+  correct:1, answer:{ar:'الفضاء المقلّص 3 نواتج ⇒ P = 1/3',en:'1/3'} },
+{ q:{ar:'<strong>السؤال 14:</strong> دُوّر مكعب. ما احتمال ظهور عدد أكبر من 4 علماً أن الناتج زوجي؟',en:'<strong>Q14:</strong> A die: P(>4 | even)?'},
+  options:[{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:2, answer:{ar:'الزوجية {2,4,6}؛ أكبر من 4 بينها: {6} ⇒ 1/3',en:'1/3'} },
+{ q:{ar:'<strong>السؤال 15:</strong> دُوّر مكعب. ما احتمال ظهور عدد أولي علماً أن الناتج أكبر من 2؟',en:'<strong>Q15:</strong> A die: P(prime | >2)?'},
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/4</span>',en:'<span class="math-display">3/4</span>'},{ar:'<span class="math-display">2/3</span>',en:'<span class="math-display">2/3</span>'}],
+  correct:1, answer:{ar:'الفضاء المقلّص {3,4,5,6}؛ الأولية {3,5} ⇒ 2/4 = 1/2',en:'1/2'} }
+]},
+{ id:'s4', title:{ar:'🔹 القسم 4: مفاهيم الفضاء المقلّص (Q16-Q20)',en:'🔹 Section 4: Reduced-Space Concepts (Q16-Q20)'}, questions:[
+{ q:{ar:'<strong>السؤال 16:</strong> عندما تتساوى احتمالات النواتج، فإن P(E|F) تساوي:',en:'<strong>Q16:</strong> With equally likely outcomes, P(E|F) ='},
+  svg: svgGraphs.fig_formula,
+  options:[{ar:'<span class="math-display">n(E∩F)/n(F)</span>',en:'<span class="math-display">n(E∩F)/n(F)</span>'},{ar:'<span class="math-display">n(E)/n(S)</span>',en:'<span class="math-display">n(E)/n(S)</span>'},{ar:'<span class="math-display">n(F)/n(E∩F)</span>',en:'<span class="math-display">n(F)/n(E∩F)</span>'},{ar:'<span class="math-display">n(E∪F)/n(S)</span>',en:'<span class="math-display">n(E∪F)/n(S)</span>'}],
+  correct:0, answer:{ar:'نعد المؤاتي داخل فضاء الشرط ونقسم على عدد عناصره',en:'Count inside reduced space'} },
+{ q:{ar:'<strong>السؤال 17:</strong> في مثال 4، لماذا المقام 4 وليس 8؟',en:'<strong>Q17:</strong> In Ex.4, why is the denominator 4 and not 8?'},
+  options:[{ar:'لأن عدد الطلاب 4',en:'Because there are 4 students'},{ar:'لأن الشرط (الفريق المعارض = زوجي) قلّص الفضاء إلى 4 نواتج',en:'Because the condition (opposing = even) reduced the space to 4 outcomes'},{ar:'لأن العدد 2 زوجي',en:'Because 2 is even'},{ar:'مصادفة',en:'Coincidence'}],
+  correct:1, answer:{ar:'معرفة الفريق تعني أن البطاقة زوجية ⇒ الفضاء الجديد 4 عناصر',en:'Known team ⇒ even card ⇒ 4 outcomes'} },
+{ q:{ar:'<strong>السؤال 18:</strong> عند رمي مكعبين، كم عدد نواتج الفضاء المقلّص «المجموع 9»؟',en:'<strong>Q18:</strong> Two dice: how many outcomes in the reduced space "sum = 9"?'},
+  svg: svgGraphs.fig_reduced,
+  options:[{ar:'<span class="math-display">9</span>',en:'<span class="math-display">9</span>'},{ar:'<span class="math-display">4</span>',en:'<span class="math-display">4</span>'},{ar:'<span class="math-display">36</span>',en:'<span class="math-display">36</span>'},{ar:'<span class="math-display">2</span>',en:'<span class="math-display">2</span>'}],
+  correct:1, answer:{ar:'{(3,6),(4,5),(5,4),(6,3)} = 4 نواتج',en:'4 outcomes'} },
+{ q:{ar:'<strong>السؤال 19:</strong> أي عبارة صحيحة عن الاحتمال الشرطي P(E|F)؟',en:'<strong>Q19:</strong> Which statement about P(E|F) is true?'},
+  options:[{ar:'<span class="math-display">0 ≤ P(E|F) ≤ 1</span>',en:'<span class="math-display">0 ≤ P(E|F) ≤ 1</span>'},{ar:'قد يتجاوز 1',en:'It may exceed 1'},{ar:'قد يكون سالباً',en:'It may be negative'},{ar:'يساوي دائماً P(E)',en:'Always equals P(E)'}],
+  correct:0, answer:{ar:'الاحتمال الشرطي احتمالٌ كغيره بين 0 و 1',en:'It is a probability: between 0 and 1'} },
+{ q:{ar:'<strong>السؤال 20:</strong> إذا كان الحدثان E و F متنافيين (E∩F = ) فإن P(E|F) =',en:'<strong>Q20:</strong> If E and F are mutually exclusive, P(E|F) ='},
+  options:[{ar:'<span class="math-display">1</span>',en:'<span class="math-display">1</span>'},{ar:'<span class="math-display">0</span>',en:'<span class="math-display">0</span>'},{ar:'<span class="math-display">P(E)</span>',en:'<span class="math-display">P(E)</span>'},{ar:'<span class="math-display">P(F)</span>',en:'<span class="math-display">P(F)</span>'}],
+  correct:1, answer:{ar:'لا نواتج مشتركة ⇒ البسط صفر ⇒ الاحتمال صفر',en:'Empty intersection ⇒ 0'} }
+]},
+{ id:'s5', title:{ar:'🔹 القسم 5: أوراق اللعب والأعداد (Q21-Q25)',en:'🔹 Section 5: Cards & Numbers (Q21-Q25)'}, questions:[
+{ q:{ar:'<strong>السؤال 21:</strong> سُحبت ورقة من 52 ورقة. ما احتمال أن تكون قلباً (♥) علماً بأنها حمراء؟',en:'<strong>Q21:</strong> A card from 52: P(heart | red)?'},
+  svg: svgGraphs.fig_deck,
+  options:[{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">1/13</span>',en:'<span class="math-display">1/13</span>'},{ar:'<span class="math-display">1/26</span>',en:'<span class="math-display">1/26</span>'}],
+  correct:1, answer:{ar:'الحمراء 26 والقلوب منها 13 ⇒ 13/26 = 1/2',en:'1/2'} },
+{ q:{ar:'<strong>السؤال 22:</strong> سُحبت ورقة. ما احتمال أن تكون ملكاً (K) علماً أنها ورقة وجه (J أو Q أو K)؟',en:'<strong>Q22:</strong> P(king | face card)?'},
+  options:[{ar:'<span class="math-display">1/12</span>',en:'<span class="math-display">1/12</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">4/13</span>',en:'<span class="math-display">4/13</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'}],
+  correct:1, answer:{ar:'ورق الوجه 12 والملوك 4 ⇒ 4/12 = 1/3',en:'1/3'} },
+{ q:{ar:'<strong>السؤال 23:</strong> سُحبت ورقة. ما احتمال أن تكون ملكاً علماً بأنها من البستون (♠)؟',en:'<strong>Q23:</strong> P(king | spade)?'},
+  options:[{ar:'<span class="math-display">1/52</span>',en:'<span class="math-display">1/52</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">1/13</span>',en:'<span class="math-display">1/13</span>'},{ar:'<span class="math-display">4/13</span>',en:'<span class="math-display">4/13</span>'}],
+  correct:2, answer:{ar:'البستون 13 ورقة فيها ملك واحد ⇒ 1/13',en:'1/13'} },
+{ q:{ar:'<strong>السؤال 24:</strong> اختير عدد من 1 إلى 10. ما احتمال أن يكون أكبر من 6 علماً أنه زوجي؟',en:'<strong>Q24:</strong> Number 1-10: P(>6 | even)?'},
+  options:[{ar:'<span class="math-display">1/5</span>',en:'<span class="math-display">1/5</span>'},{ar:'<span class="math-display">2/5</span>',en:'<span class="math-display">2/5</span>'},{ar:'<span class="math-display">3/5</span>',en:'<span class="math-display">3/5</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'}],
+  correct:1, answer:{ar:'الزوجية {2,4,6,8,10}؛ الأكبر من 6 بينها {8,10} ⇒ 2/5',en:'2/5'} },
+{ q:{ar:'<strong>السؤال 25:</strong> اختير عدد من 1 إلى 10. ما احتمال أن يكون زوجياً علماً أنه أكبر من 5؟',en:'<strong>Q25:</strong> P(even | >5)?'},
+  options:[{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">3/10</span>',en:'<span class="math-display">3/10</span>'},{ar:'<span class="math-display">3/5</span>',en:'<span class="math-display">3/5</span>'},{ar:'<span class="math-display">2/5</span>',en:'<span class="math-display">2/5</span>'}],
+  correct:2, answer:{ar:'الأكبر من 5: {6,7,8,9,10}؛ الزوجية بينها {6,8,10} ⇒ 3/5',en:'3/5'} }
+]},
+{ id:'s6', title:{ar:'🔹 القسم 6: تطبيقات ومسائل مركبة (Q26-Q30)',en:'🔹 Section 6: Applications & Mixed (Q26-Q30)'}, questions:[
+{ q:{ar:'<strong>السؤال 26:</strong> صف فيه 30 طالباً منهم 18 بنتاً، و6 بنات يلبسن نظارات. اختير طالب علماً أنه بنت؛ ما احتمال أنها تلبس نظارات؟',en:'<strong>Q26:</strong> Class of 30: 18 girls, 6 girls wear glasses. P(glasses | girl)?'},
+  options:[{ar:'<span class="math-display">1/5</span>',en:'<span class="math-display">1/5</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">3/10</span>',en:'<span class="math-display">3/10</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'}],
+  correct:1, answer:{ar:'6/18 = 1/3',en:'1/3'} },
+{ q:{ar:'<strong>السؤال 27:</strong> من 40 شخصاً، 25 يشربون الشاي و10 منهم مع سكر. اختير شخص علماً أنه يشرب الشاي؛ ما احتمال أنه مع سكر؟',en:'<strong>Q27:</strong> Of 40 people, 25 drink tea, 10 of them with sugar. P(sugar | tea)?'},
+  options:[{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'},{ar:'<span class="math-display">2/5</span>',en:'<span class="math-display">2/5</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">3/5</span>',en:'<span class="math-display">3/5</span>'}],
+  correct:1, answer:{ar:'10/25 = 2/5',en:'2/5'} },
+{ q:{ar:'<strong>السؤال 28:</strong> رمي مكعبين: ما احتمال أن يكون المجموع 9 علماً أن المكعب الأول أظهر 5؟',en:'<strong>Q28:</strong> Two dice: P(sum 9 | first shows 5)?'},
+  options:[{ar:'<span class="math-display">1/36</span>',en:'<span class="math-display">1/36</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/4</span>',en:'<span class="math-display">1/4</span>'},{ar:'<span class="math-display">5/6</span>',en:'<span class="math-display">5/6</span>'}],
+  correct:1, answer:{ar:'الفضاء المقلّص 6 نواتج (5، ث)؛ المجموع 9 يحتاج ث = 4 ⇒ 1/6',en:'1/6'} },
+{ q:{ar:'<strong>السؤال 29:</strong> رمي مكعبين: ما احتمال أن يكون المجموع 8 علماً أن العددين متساويان (دبل)؟',en:'<strong>Q29:</strong> P(sum 8 | doubles)?'},
+  svg: svgGraphs.fig_doubles,
+  options:[{ar:'<span class="math-display">1/36</span>',en:'<span class="math-display">1/36</span>'},{ar:'<span class="math-display">1/3</span>',en:'<span class="math-display">1/3</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/2</span>',en:'<span class="math-display">1/2</span>'}],
+  correct:2, answer:{ar:'الدبل 6 نواتج؛ مجموع 8 منها: (4,4) ⇒ 1/6',en:'1/6'} },
+{ q:{ar:'<strong>السؤال 30:</strong> رمي مكعبين: ما احتمال أن يكون المجموع 12 علماً أن المجموع زوجي؟',en:'<strong>Q30:</strong> P(sum 12 | sum even)?'},
+  options:[{ar:'<span class="math-display">1/36</span>',en:'<span class="math-display">1/36</span>'},{ar:'<span class="math-display">1/18</span>',en:'<span class="math-display">1/18</span>'},{ar:'<span class="math-display">1/6</span>',en:'<span class="math-display">1/6</span>'},{ar:'<span class="math-display">1/12</span>',en:'<span class="math-display">1/12</span>'}],
+  correct:1, answer:{ar:'المجاميع الزوجية 18 ناتجاً؛ المجموع 12 ناتج واحد (6,6) ⇒ 1/18',en:'1/18'} }
+]}
+]};
+
+function shuffleArray(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+function prepareShuffledExam(){rng=mulberry32(currentSeed);examData=JSON.parse(JSON.stringify(originalExamData));correctAnswersMap={};let g=0;examData.sections.forEach(s=>{s.questions=shuffleArray(s.questions);s.questions.forEach(q=>{const oc=q.options.map((o,i)=>({option:o,isCorrect:i===q.correct}));const sh=shuffleArray(oc);q.options=sh.map(o=>o.option);q.correct=sh.findIndex(o=>o.isCorrect);correctAnswersMap[g]=String.fromCharCode(97+q.correct);g++})})}
+function reshuffleExam(){if(confirm(currentLang==='ar'?'🔄 سيتم إنشاء أسئلة جديدة ومسح إجاباتك. هل أنت متأكد؟':'🔄 New questions will be generated. Are you sure?')){currentSeed=Date.now();timeRemaining=TOTAL_TIME;answersVisible=false;prepareShuffledExam();renderExam();saveState();alert(currentLang==='ar'?'🎲 تم تغيير الأسئلة! حظاً موفقاً! 🍀':' Questions changed! Good luck! 🍀');window.scrollTo({top:0,behavior:'smooth'})}}
+function setLanguage(lang){currentLang=lang;document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';document.getElementById('btn-ar').classList.toggle('active',lang==='ar');document.getElementById('btn-en').classList.toggle('active',lang==='en');document.body.classList.toggle('en-mode',lang==='en');document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)});document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+lang)});renderExam();saveState(false)}
+function renderExam(){const container=document.getElementById('exam-content');const lbl={option:['a)','b)','c)','d)'],answer:currentLang==='ar'?'✅ الإجابة:':'✅ Answer:'};let html='',g=0;
+examData.sections.forEach((section,si)=>{const bc=['module-1','module-2','module-3','module-4','module-5','module-6'][si];html+='<section class="bg-white p-6 rounded-2xl shadow-lg border-2 border-amber-100"><div class="text-center mb-4"><span class="module-badge '+bc+'">'+section.title[currentLang]+'</span></div><ol class="space-y-4 text-sm">';
+section.questions.forEach(q=>{html+='<li class="border-r-4 border-amber-400 pr-4 py-2" id="q-'+g+'" style="border-right:4px solid #d97706;padding-right:1rem;"><strong class="text-amber-700">'+(g+1)+'.</strong> '+q.q[currentLang]+'<br>';
+if(q.svg)html+='<div class="graph-container">'+q.svg+'</div>';
+q.options.forEach((opt,oi)=>{html+='<label class="cursor-pointer block mt-2 mr-4 hover:bg-amber-50 rounded-lg p-2 transition" style="margin-right:1rem;"><input type="radio" name="q'+g+'" value="'+String.fromCharCode(97+oi)+'" class="mr-2 ml-2"><span class="arabic-math">'+lbl.option[oi]+' '+opt[currentLang]+'</span></label>'});
+html+='<div class="answer-box text-green-700 mt-3 font-medium '+(answersVisible?'':'hidden')+' bg-green-50 rounded-lg p-3 border border-green-200">'+lbl.answer+' '+lbl.option[q.correct]+' <span class="arabic-math">'+q.options[q.correct][currentLang]+'</span><br><span class="text-sm text-green-700 mt-2 block arabic-math">'+q.answer[currentLang]+'</span></div></li>';g++});
+html+='</ol></section>'});
+container.innerHTML=html}
+function startTimer(){updateTimerDisplay();timerInterval=setInterval(()=>{timeRemaining--;updateTimerDisplay();if(timeRemaining%60===0)saveState(false);if(timeRemaining<=600)document.getElementById('timer').classList.add('timer-warning');if(timeRemaining<=0){clearInterval(timerInterval);alert(currentLang==='ar'?'⏰ انتهى الوقت!':"⏰ Time's up!");gradeExam()}},1000)}
+function updateTimerDisplay(){const m=Math.floor(timeRemaining/60),s=timeRemaining%60;document.getElementById('timer').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function toggleAnswers(){answersVisible=!answersVisible;document.querySelectorAll('.answer-box').forEach(el=>el.classList.toggle('hidden',!answersVisible));saveState(false)}
+function gradeExam(){let cc=0;const ss=new Array(TOTAL_SECTIONS).fill(0);
+for(let i=0;i<TOTAL_QUESTIONS;i++){const sel=document.querySelector('input[name="q'+i+'"]:checked');const li=document.getElementById('q-'+i);if(li){const ok=sel&&sel.value===correctAnswersMap[i];if(ok){cc++;li.classList.add('correct');li.classList.remove('incorrect');ss[Math.floor(i/QUESTIONS_PER_SECTION)]++}else{li.classList.add('incorrect');li.classList.remove('correct')}}}
+const score=Math.round(cc/TOTAL_QUESTIONS*100);document.getElementById('res-total').textContent=score+' / 100';document.getElementById('res-name').textContent=document.getElementById('studentName').value||(currentLang==='ar'?'بطل':'Champion');document.getElementById('res-date').textContent=new Date().toLocaleDateString(currentLang==='ar'?'ar-AE':'en-US');
+const pc=document.getElementById('sections-performance');pc.innerHTML='';examData.sections.forEach((s,i)=>{pc.innerHTML+='<div class="flex justify-between items-center p-3 bg-white rounded-lg"><span class="text-gray-700">'+s.title[currentLang]+'</span><span class="font-bold text-amber-700">'+ss[i]+'/'+QUESTIONS_PER_SECTION+'</span></div>'});
+const badge=document.getElementById('success-badge');document.getElementById('success-percent').textContent=score+'%';
+if(currentLang==='ar'){if(score>=90){badge.textContent='🌟 ممتاز جداً!';badge.className='success-badge grade-excellent'}else if(score>=75){badge.textContent='👏 ممتاز!';badge.className='success-badge grade-good'}else if(score>=50){badge.textContent='👍 جيد';badge.className='success-badge grade-pass'}else{badge.textContent='💪 حاول مرة أخرى';badge.className='success-badge grade-fail'}}
+else{if(score>=90){badge.textContent='🌟 Outstanding!';badge.className='success-badge grade-excellent'}else if(score>=75){badge.textContent='👏 Excellent!';badge.className='success-badge grade-good'}else if(score>=50){badge.textContent='👍 Good';badge.className='success-badge grade-pass'}else{badge.textContent='💪 Try Again';badge.className='success-badge grade-fail'}}
+document.getElementById('results-panel').classList.remove('hidden');document.getElementById('results-panel').scrollIntoView({behavior:'smooth'});if(timerInterval)clearInterval(timerInterval)}
+function sendResultsToEmail(){const btn=document.getElementById('sendEmailBtn'),status=document.getElementById('emailStatus');btn.disabled=true;btn.textContent=currentLang==='ar'?'⏳ جاري الإرسال...':'⏳ Sending...';
+const name=document.getElementById('studentName').value||'N/A',klass=document.getElementById('studentClass').value||'N/A',date=document.getElementById('examDate').value||new Date().toLocaleDateString(),score=document.getElementById('res-total').textContent,rate=document.getElementById('success-percent').textContent,badge=document.getElementById('success-badge').textContent;
+let qh='<div style="font-family:Arial;direction:rtl"><h2>🎯 '+(currentLang==='ar'?'نتيجة امتحان الاحتمال الشرطي (الفضاء المقلّص) - رياضيات 11 عام':'Reduced-Space Conditional Probability Exam - Grade 11')+'</h2><p><b>الاسم:</b> '+name+'</p><p><b>الشعبة:</b> '+klass+'</p><p><b>التاريخ:</b> '+date+'</p><p><b>الدرجة:</b> '+score+' ('+rate+')</p><p><b>التقدير:</b> '+badge+'</p><hr><table style="width:100%;border-collapse:collapse"><tr style="background:#d97706;color:white"><th style="padding:8px;border:1px solid #ddd">#</th><th style="padding:8px;border:1px solid #ddd">السؤال</th><th style="padding:8px;border:1px solid #ddd">إجابة الطالب</th><th style="padding:8px;border:1px solid #ddd">الصحيحة</th><th style="padding:8px;border:1px solid #ddd">النتيجة</th></tr>';
+let g=0;examData.sections.forEach(sec=>{qh+='<tr style="background:#fef3c7"><td colspan="5" style="padding:8px;font-weight:bold;border:1px solid #ddd">'+sec.title.ar+'</td></tr>';sec.questions.forEach(q=>{const sel=document.querySelector('input[name="q'+g+'"]:checked');const sv=sel?sel.value:null;const cv=correctAnswersMap[g];const ic=sv===cv;let sat=sv?q.options[sv.charCodeAt(0)-97][currentLang]:(currentLang==='ar'?'❌ لم يجب':'❌ No answer');const sac=ic?'#16a34a':'#dc2626';const cat=q.options[q.correct][currentLang];const rb=ic?'#f0fdf4':'#fef2f2';qh+='<tr style="background:'+rb+'"><td style="padding:8px;border:1px solid #ddd;text-align:center">'+(g+1)+'</td><td style="padding:8px;border:1px solid #ddd">'+q.q.ar.replace(/<[^>]+>/g,'').substring(0,70)+'...</td><td style="padding:8px;border:1px solid #ddd;color:'+sac+'">'+sat+'</td><td style="padding:8px;border:1px solid #ddd;color:#16a34a">'+cat+'</td><td style="padding:8px;border:1px solid #ddd;text-align:center">'+(ic?'✅':'❌')+'</td></tr>';g++})});
+qh+='</table></div>';
+emailjs.send(SERVICE_ID,TEMPLATE_ID,{to_email:TARGET_EMAIL,student_name:name,student_class:klass,exam_date:date,total_score:score,success_rate:rate,grade:badge,answers_table:qh})
+.then(()=>{status.textContent=currentLang==='ar'?'✅ تم الإرسال بنجاح!':'✅ Sent successfully!';status.style.color='#16a34a';btn.textContent=currentLang==='ar'?'✓ تم':'✓ Sent';alert(currentLang==='ar'?'تم إرسال النتيجة للمعلم بنجاح!':'Result sent to teacher successfully!')})
+.catch(err=>{status.textContent=currentLang==='ar'?'❌ فشل الإرسال':'❌ Failed';status.style.color='#dc2626';btn.disabled=false;btn.textContent=currentLang==='ar'?'📧 حاول مرة أخرى':'📧 Try Again'});}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const saved=loadState();
+  if(saved&&saved.seed){currentSeed=saved.seed;currentLang=saved.lang||'ar';timeRemaining=saved.timeRemaining!==undefined?saved.timeRemaining:TOTAL_TIME;answersVisible=saved.answersVisible||false}else{currentSeed=Date.now()}
+  document.getElementById('btn-ar').classList.toggle('active',currentLang==='ar');
+  document.getElementById('btn-en').classList.toggle('active',currentLang==='en');
+  document.body.classList.toggle('en-mode',currentLang==='en');
+  document.documentElement.lang=currentLang;document.documentElement.dir=currentLang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+currentLang)});
+  document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+currentLang)});
+  prepareShuffledExam();renderExam();
+  if(saved){if(saved.studentName)document.getElementById('studentName').value=saved.studentName;if(saved.studentClass)document.getElementById('studentClass').value=saved.studentClass;if(saved.examDate)document.getElementById('examDate').value=saved.examDate;if(saved.answers)restoreAnswers(saved.answers)}
+  setupAnswerListeners();setupInputListeners();
+  document.getElementById('method-holder').innerHTML=svgGraphs.fig_formula;
+  startTimer();
+});
+window.addEventListener('beforeunload',()=>saveState(false));
+</script>
+</body>
+</html>
